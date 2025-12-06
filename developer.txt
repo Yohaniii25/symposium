@@ -1,0 +1,14 @@
+1. x-data="{ open: false }"': It creates a variable named open and sets it to false (dropdown hidden by default).
+let open = false;
+
+2. @click="open = !open"
+
+This runs when the button is clicked.
+
+If open = false → dropdown opens
+
+If open = true → dropdown closes
+
+3. @click.outside="open = false" : If the user clicks anywhere outside the component, the dropdown automatically closes.
+
+
