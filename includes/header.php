@@ -17,6 +17,8 @@ $loggedInAdmin = $auth->isAdmin() ? $auth->admin() : null;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GJRTI International Research Symposium 2025</title>
   <meta name="description" content="GJRTI International Research Symposium 2025">
+  <!-- favicon -->
+   <link rel="icon" type="image/png" href="assets/img/logo.png" />
 
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
