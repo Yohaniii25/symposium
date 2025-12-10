@@ -1,6 +1,6 @@
 <!-- includes/footer.php -->
 <footer class="bg-gradient-to-b from-primary via-richpurple to-[#1a0b4d] text-white">
-  <div class="max-w-7xl mx-auto px-6 py-16">
+  <div class="max-w-7xl mx-auto px-6 py-8">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
       <!-- 1. Symposium Branding -->
@@ -94,13 +94,11 @@
     </div>
 
     <!-- Bottom Copyright Bar -->
-    <div class="mt-16 pt-8 border-t border-white/20 text-center">
+    <div class="mt-16 pt-4 border-t border-white/20 text-center">
       <p class="text-sm opacity-80">
         © 2025 <span class="font-bold text-accent">Gem and Jewellery Research and Training Institute</span>. All rights reserved.
       </p>
-      <p class="text-xs opacity-60 mt-2">
-        Official Website of the 3rd International Research Symposium 2025
-      </p>
+
     </div>
   </div>
 </footer>

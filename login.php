@@ -1,106 +1,95 @@
-<!-- includes/header.php -->
+<?php
+
+require_once 'config/config.php';
+require_once 'classes/database.php';
+require_once 'classes/user.php';
+require_once 'classes/admin.php';
+require_once 'classes/auth.php';
+
+$db = new Database();
+$userModel = new User($db);
+$adminModel = new Admin($db);
+$auth = new Auth();
+
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+
+    if (empty($email) || empty($password)) {
+        $message = "Please fill both fields";
+    } else {
+        // Try Admin First
+        $admin = $adminModel->login($email, $password);
+        if ($admin) {
+            $auth->loginAdmin($admin);
+            header("Location: admin/pages/dashboard.php");
+            exit();
+        }
+
+        // Then Try Participant
+        $user = $userModel->login($email, $password);
+        if ($user) {
+            $auth->loginParticipant($user);
+            header("Location: user-profile.php");
+            exit();
+        }
+
+        $message = "Invalid email or password";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GJRTI International Research Symposium 2026</title>
-    <meta name="description" content="GJRTI International Research Symposium 2026">
-
-    <!-- Alpine.js for dropdowns -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#29147d',
-                        accent: '#c0a35c',
-                        blue: '#107cc0',
-                        warmblue: '#047bc2',
-                        lightblue: '#84bde0',
-                        purple: '#2b1c60',
-                        softpurple: '#9386bc',
-                        lightbg: '#e2f1fa',
-                        richpurple: '#2a1572',
-                        warmgold: '#c0a064',
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
-
-        .mobile-menu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-        }
-
-        .mobile-menu.active {
-            max-height: 600px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - GJRTI Symposium</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: {
+      primary: '#29147d', accent: '#c0a35c', richpurple: '#2a1572', warmgold: '#c0a064', lightbg: '#e2f1fa'
+    }}}};
+  </script>
 </head>
+<body class="bg-lightbg min-h-screen flex items-center justify-center px-4">
 
-<!-- COMPACT LOGIN FORM -->
-<section class="py-16 bg-lightbg">
-    <div class="max-w-md mx-auto px-6">
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <!-- Mini Header -->
-            <div class="bg-gradient-to-r from-primary to-richpurple text-white py-8 text-center">
-                <img src="assets/img/logo.png" alt="GJRTI" class="h-16 mx-auto mb-3">
-                <h2 class="text-2xl font-bold">Symposium Login</h2>
-            </div>
+  <div class="w-full max-w-sm">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
 
-            <form class="p-8 space-y-6">
-                <!-- Email -->
-                <div>
-                    <input type="email" name="email" required placeholder="Email Address"
-                        class="w-full px-5 py-4 border border-gray-300 rounded-lg focus:border-accent focus:outline-none text-lg">
-                </div>
+      <div class="bg-gradient-to-r from-primary to-richpurple text-white py-8 text-center">
+        <img src="assets/img/logo.png" alt="GJRTI" class="h-16 mx-auto mb-3">
+        <h2 class="text-2xl font-bold">Login</h2>
+      </div>
 
-                <!-- Password -->
-                <div>
-                    <input type="password" name="password" required placeholder="Password"
-                        class="w-full px-5 py-4 border border-gray-300 rounded-lg focus:border-accent focus:outline-none text-lg">
-                </div>
+      <div class="p-8 space-y-5">
 
-                <!-- Remember + Forgot -->
-                <div class="flex justify-between text-sm">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" class="w-4 h-4 text-accent rounded">
-                        <span class="text-gray-600">Remember me</span>
-                    </label>
-                    <a href="forgot-password.php" class="text-accent hover:underline">Forgot?</a>
-                </div>
+        <?php if ($message): ?>
+          <div class="bg-red-100 text-red-700 px-4 py-3 rounded-lg text-center text-sm font-medium">
+            <?= htmlspecialchars($message) ?>
+          </div>
+        <?php endif; ?>
 
-                <!-- Login Button -->
-                <button type="submit"
-                    class="w-full bg-accent text-primary py-4 rounded-lg text-xl font-bold hover:bg-warmgold transition shadow-lg">
-                    Login
-                </button>
+        <form method="POST">
+          <input type="email" name="email" required placeholder="Email"
+                 class="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-accent focus:outline-none text-base">
 
-                <!-- Register Link -->
-                <p class="text-center text-sm text-gray-600">
-                    No account?
-                    <a href="signup.php" class="text-accent font-bold hover:underline">Register here</a>
-                </p>
-            </form>
+          <input type="password" name="password" required placeholder="Password"
+                 class="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-accent focus:outline-none text-base mt-4">
+
+          <button type="submit"
+                  class="w-full bg-accent text-primary py-3.5 rounded-lg font-bold text-lg hover:bg-warmgold transition mt-6">
+            Login
+          </button>
+        </form>
+
+        <div class="text-center text-sm text-gray-600 mt-5">
+          <a href="index.php" class="hover:text-primary">← Back to Home</a>
         </div>
-
-        <!-- Back Link -->
-        <div class="text-center mt-8">
-            <a href="index.php" class="text-sm text-primary hover:text-accent flex items-center justify-center gap-1">
-                ← Back to Home
-            </a>
-        </div>
+      </div>
     </div>
-</section>
+  </div>
+</body>
+</html>

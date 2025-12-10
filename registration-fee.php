@@ -43,11 +43,7 @@
           </tr>
         </tbody>
       </table>
-      <div class="p-8 bg-gray-50 text-center">
-        <a href="signup.php" class="bg-accent text-primary px-12 py-5 rounded-lg text-xl font-bold hover:bg-warmgold transition shadow-xl">
-          Proceed to Registration
-        </a>
-      </div>
+
     </div>
   </div>
 </section>
