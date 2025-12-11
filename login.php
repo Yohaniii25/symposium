@@ -88,6 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="text-center text-sm text-gray-600 mt-5">
           <a href="index.php" class="hover:text-primary">← Back to Home</a>
         </div>
+
+        <!-- if not logged-in create account link -->
+        <div class="text-center text-sm text-gray-600">
+          <span>Don't have an account? </span>
+          <a href="signup.php" class="text-primary font-medium hover:underline">Create one</a>
       </div>
     </div>
   </div>

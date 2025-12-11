@@ -12,3 +12,8 @@ If open = true → dropdown closes
 3. @click.outside="open = false" : If the user clicks anywhere outside the component, the dropdown automatically closes.
 
 
+Procedure
+
+1. Admin can log to Dashboard and delete or view payments
+2. User have to create account and do the relevant payments
+3. Then user have to submit abstract
