@@ -1,5 +1,4 @@
 <?php
-
 class User {
 
     private $db;
@@ -15,7 +14,7 @@ class User {
         $sql = "INSERT INTO users (title, full_name, nic_passport, email, phone, food_preference, participant_type, password) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-       $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
         if (!$stmt) return false;
 
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -30,12 +29,18 @@ class User {
             $data['participant_type'],
             $hashed
         );
-        return $stmt->execute();
+
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
     }
 
-    // Login user
+    // Login user — NOW RETURNS reference_no
     public function login($email, $password) {
-        $sql = "SELECT * FROM users WHERE email = ?";
+        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no, password 
+                FROM users WHERE email = ? LIMIT 1";
+
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) return false;
 
@@ -43,12 +48,13 @@ class User {
         $stmt->execute();
         $result = $stmt->get_result();
         $user = $result->fetch_assoc();
+        $stmt->close();
 
         if ($user && password_verify($password, $user['password'])) {
-            return $user;
-        } else {
-            return false;
+            return $user; // Now includes reference_no
         }
+
+        return false;
     }
 
     // Check if email exists
@@ -60,22 +66,27 @@ class User {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->close();
 
-        return $stmt->num_rows > 0;
+        return $exists;
     }
 
-    // Get user by ID
+    // Get user by ID — also returns reference_no
     public function getUserById($id) {
-        $sql = "SELECT * FROM users WHERE id = ?";
+        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no, status 
+                FROM users WHERE id = ?";
+
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) return false;
 
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+
+        return $user;
     }
 }
-
-
 ?>

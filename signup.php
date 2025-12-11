@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require_once 'config/config.php';
 require_once 'classes/database.php';
 require_once 'classes/user.php';
@@ -39,10 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = implode("<br>", $errors);
     } else {
         unset($data['confirm_password']);
+
+        // Register user first
         if ($userModel->register($data)) {
-            // Auto login after registration
+            // Get the newly created user ID
+            $userId = $db->getConnection()->insert_id;
+
+            // Generate reference number
+            $year = date('Y');
+            $refNumber = "GJRTI_SYMP_{$year}_" . str_pad($userId, 4, '0', STR_PAD_LEFT);
+            // Save reference number to database
+            $stmt = $db->getConnection()->prepare("UPDATE users SET reference_no = ? WHERE id = ?");
+            $stmt->bind_param("si", $refNumber, $userId);
+            $stmt->execute();
+            $stmt->close();
+
+            // Auto login
             $user = $userModel->login($data['email'], $_POST['password']);
             if ($user) {
+                // Add reference_no to session for immediate use
+                $_SESSION['user_reference'] = $refNumber;
+
                 $auth->loginParticipant($user);
                 header("Location: user-profile.php");
                 exit();

@@ -57,6 +57,10 @@ $userData = $result->fetch_assoc();
               <strong class="text-gray-600">Full Name:</strong>
               <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($user['name']) ?></p>
             </div>
+            <!-- reference number -->
+            <div>
+              <strong class="text-gray-600">Reference Number:</strong>
+              <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($_SESSION['user_reference'] ?? 'N/A') ?></p>
             <div>
               <strong class="text-gray-600">Email:</strong>
               <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($user['email']) ?></p>

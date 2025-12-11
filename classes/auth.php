@@ -9,6 +9,7 @@ class Auth {
         $_SESSION['user_name'] = $user['full_name'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['participant_type'] = $user['participant_type'];
+        $_SESSION['user_reference'] = $user['reference_no'] ?? null;
         $_SESSION['role'] = 'participant';
         $_SESSION['logged_in'] = true;
     }
