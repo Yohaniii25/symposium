@@ -26,7 +26,7 @@ $sql = "
         u.food_preference,
         u.participant_type,
         COALESCE(p.status, 'pending') AS payment_status,
-        p.slip AS slip_filename,
+        p.slip AS slip,
         CASE 
             WHEN u.participant_type = 'Presenting Author' THEN 1000
             WHEN u.participant_type = 'Co-Author' THEN 1500
@@ -185,8 +185,8 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
               </td>
               
               <td class="px-6 py-4 text-center">
-                <?php if ($p['slip_filename'] && $p['payment_status'] === 'under_review'): ?>
-                  <a href="../../uploads/payment_slips/<?= htmlspecialchars($p['slip_filename']) ?>" 
+                <?php if ($p['slip'] && ($p['payment_status'] === 'under_review' || $p['payment_status'] === 'paid')): ?>
+                  <a href="../../uploads/payment_slips/<?= htmlspecialchars($p['slip']) ?>" 
                      target="_blank" class="text-primary hover:text-accent font-bold text-sm underline">
                     View Slip
                   </a>

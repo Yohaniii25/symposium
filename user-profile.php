@@ -16,14 +16,21 @@ if (!$auth->isLoggedIn()) {
 // gets real logged-in data
 $user = $auth->user();
 
-// Optional: Get more details from DB if needed (like status, abstract)
 $db = new Database();
 $conn = $db->conn;
-$stmt = $conn->prepare("SELECT status, participant_type FROM users WHERE id = ?");
-$stmt->bind_param("i", $user['id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$userData = $result->fetch_assoc();
+
+// Get user with payment status
+$userClass = new User($db);
+$userWithPayment = $userClass->getUserWithPaymentStatus($user['id']);
+$userPayments = $userClass->getUserPayments($user['id']);
+
+// Fallback to basic user data if needed
+$userData = [
+    'participant_type' => $userWithPayment['participant_type'] ?? '',
+    'reference_no' => $userWithPayment['reference_no'] ?? '',
+    'payment_status' => $userWithPayment['payment_status'] ?? 'Not Paid',
+    'payment_method' => $userWithPayment['payment_method'] ?? 'N/A'
+];
 
 ?>
 
@@ -60,7 +67,8 @@ $userData = $result->fetch_assoc();
             <!-- reference number -->
             <div>
               <strong class="text-gray-600">Reference Number:</strong>
-              <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($_SESSION['user_reference'] ?? 'N/A') ?></p>
+              <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($userData['reference_no'] ?? 'N/A') ?></p>
+            </div>
             <div>
               <strong class="text-gray-600">Email:</strong>
               <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($user['email']) ?></p>
@@ -73,20 +81,21 @@ $userData = $result->fetch_assoc();
 
           <div class="space-y-5">
             <div>
-              <strong class="text-gray-600">Registration Status:</strong>
-              <p class="mt-1">
-                <span class="px-4 py-2 rounded-full text-sm font-bold
-                  <?= $userData['status'] === 'approved' ? 'bg-green-100 text-green-800' : 
-                     ($userData['status'] === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') ?>">
-                  <?= ucfirst($userData['status'] ?? 'Pending') ?>
-                </span>
+              <strong class="text-gray-600">Payment Status:</strong>
+              <p class="font-bold mt-1 <?= ($userData['payment_status'] === 'paid') ? 'text-green-600' : (($userData['payment_status'] === 'under_review') ? 'text-yellow-600' : 'text-red-600') ?>">
+                <?= htmlspecialchars(ucfirst($userData['payment_status'])) ?>
               </p>
             </div>
-
             <div>
-              <strong class="text-gray-600">Payment Status:</strong>
-              <p class="text-red-600 font-bold mt-1">Not Paid</p>
+              <strong class="text-gray-600">Payment Method:</strong>
+              <p class="text-gray-900 font-medium mt-1"><?= htmlspecialchars($userData['payment_method']) ?></p>
             </div>
+            <?php if ($userWithPayment['transaction_id']): ?>
+            <div>
+              <strong class="text-gray-600">Transaction ID:</strong>
+              <p class="text-gray-900 font-medium mt-1 text-sm"><?= htmlspecialchars($userWithPayment['transaction_id']) ?></p>
+            </div>
+            <?php endif; ?>
           </div>
         </div>
 
@@ -107,6 +116,45 @@ $userData = $result->fetch_assoc();
             Logout
           </a>
         </div>
+
+        <!-- Payment History Section -->
+        <?php if (!empty($userPayments)): ?>
+        <div class="mt-12 border-t pt-12">
+          <h3 class="text-2xl font-bold text-primary mb-8 text-center">Payment History</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-lg">
+              <thead class="bg-lightbg">
+                <tr>
+                  <th class="px-6 py-3 text-left font-bold text-gray-700">Date</th>
+                  <th class="px-6 py-3 text-left font-bold text-gray-700">Amount</th>
+                  <th class="px-6 py-3 text-left font-bold text-gray-700">Method</th>
+                  <th class="px-6 py-3 text-left font-bold text-gray-700">Status</th>
+                  <th class="px-6 py-3 text-left font-bold text-gray-700">Transaction ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($userPayments as $payment): ?>
+                <tr class="border-b hover:bg-lightbg transition">
+                  <td class="px-6 py-4"><?= date('M d, Y', strtotime($payment['created_at'])) ?></td>
+                  <td class="px-6 py-4 font-medium"><?= number_format($payment['amount'], 2) ?> <?= htmlspecialchars($payment['currency']) ?></td>
+                  <td class="px-6 py-4"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $payment['payment_method']))) ?></td>
+                  <td class="px-6 py-4">
+                    <span class="px-4 py-2 rounded-full font-bold text-sm <?= 
+                      ($payment['status'] === 'paid') ? 'bg-green-100 text-green-700' : 
+                      (($payment['status'] === 'under_review') ? 'bg-yellow-100 text-yellow-700' : 
+                      (($payment['status'] === 'pending') ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'))
+                    ?>">
+                      <?= htmlspecialchars(ucfirst($payment['status'])) ?>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm"><?= htmlspecialchars($payment['transaction_id'] ?? ($payment['slip'] ?? 'N/A')) ?></td>
+                </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>

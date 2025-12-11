@@ -74,7 +74,7 @@ class User {
 
     // Get user by ID — also returns reference_no
     public function getUserById($id) {
-        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no, status 
+        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no
                 FROM users WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
@@ -87,6 +87,75 @@ class User {
         $stmt->close();
 
         return $user;
+    }
+
+    // Get user profile with payment status
+    public function getUserWithPaymentStatus($id) {
+        $sql = "SELECT 
+                    u.id,
+                    u.title,
+                    u.full_name,
+                    u.nic_passport,
+                    u.email,
+                    u.phone,
+                    u.food_preference,
+                    u.participant_type,
+                    u.reference_no,
+                    u.created_at,
+                    p.id AS payment_id,
+                    p.amount,
+                    p.currency,
+                    p.payment_method,
+                    p.transaction_id,
+                    p.slip,
+                    p.status AS payment_status,
+                    p.created_at AS payment_date
+                FROM users u
+                LEFT JOIN payments p ON u.id = p.user_id AND p.status IN ('paid', 'under_review')
+                WHERE u.id = ?
+                ORDER BY p.created_at DESC
+                LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+        $stmt->close();
+
+        return $data;
+    }
+
+    // Get all payments for a user
+    public function getUserPayments($id) {
+        $sql = "SELECT 
+                    id,
+                    amount,
+                    currency,
+                    payment_method,
+                    transaction_id,
+                    slip,
+                    status,
+                    created_at
+                FROM payments
+                WHERE user_id = ?
+                ORDER BY created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $payments = [];
+        while ($row = $result->fetch_assoc()) {
+            $payments[] = $row;
+        }
+        $stmt->close();
+
+        return $payments;
     }
 }
 ?>
