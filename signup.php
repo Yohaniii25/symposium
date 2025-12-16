@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once 'config/config.php';
 require_once 'classes/database.php';
 require_once 'classes/user.php';
@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'phone'            => trim($_POST['phone']),
         'food_preference'  => $_POST['food_preference'],
         'participant_type' => $_POST['participant_type'],
+        'country_type'     => $_POST['country_type'],  
         'password'         => $_POST['password'],
         'confirm_password' => $_POST['confirm_password']
     ];
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['nic_passport'])) $errors[] = "NIC/Passport is required";
     if (empty($data['email'])) $errors[] = "Email is required";
     if (empty($data['phone'])) $errors[] = "Phone is required";
+    if (empty($data['country_type'])) $errors[] = "Please select Local or International";
     if ($data['password'] !== $data['confirm_password']) $errors[] = "Passwords do not match";
     if (strlen($data['password']) < 6) $errors[] = "Password must be at least 6 characters";
     if ($userModel->emailExists($data['email'])) $errors[] = "Email already registered";
@@ -40,26 +42,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         unset($data['confirm_password']);
 
-        // Register user first
         if ($userModel->register($data)) {
-            // Get the newly created user ID
             $userId = $db->getConnection()->insert_id;
 
             // Generate reference number
             $year = date('Y');
             $refNumber = "GJRTI_SYMP_{$year}_" . str_pad($userId, 4, '0', STR_PAD_LEFT);
-            // Save reference number to database
-            $stmt = $db->getConnection()->prepare("UPDATE users SET reference_no = ? WHERE id = ?");
-            $stmt->bind_param("si", $refNumber, $userId);
+
+            // Save reference_no and country_type
+            $stmt = $db->getConnection()->prepare("UPDATE users SET reference_no = ?, country_type = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $refNumber, $data['country_type'], $userId);
             $stmt->execute();
             $stmt->close();
 
             // Auto login
             $user = $userModel->login($data['email'], $_POST['password']);
             if ($user) {
-                // Add reference_no to session for immediate use
                 $_SESSION['user_reference'] = $refNumber;
-
                 $auth->loginParticipant($user);
                 header("Location: user-profile.php");
                 exit();
@@ -73,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include 'includes/header.php'; ?>
 
-<!-- HERO SECTION -->
+<!-- HERO -->
 <section class="relative bg-gradient-to-br from-primary/95 via-purple/90 to-richpurple/95 text-white py-32">
   <div class="absolute inset-0 z-0">
     <img src="./assets/img/breadcrumb.jpeg" alt="" class="w-full h-full object-cover">
@@ -81,11 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <div class="relative z-10 text-center max-w-4xl mx-auto px-6">
     <h1 class="text-5xl md:text-7xl font-bold mb-6">Online Registration</h1>
-    <p class="text-xl opacity-90">Join the GJRTI 3rd International Research Symposium 2025</p>
+    <p class="text-xl opacity-90">GJRTI 3rd International Research Symposium 2025</p>
   </div>
 </section>
 
-<!-- REGISTRATION FORM -->
 <section class="py-20 bg-lightbg">
   <div class="max-w-4xl mx-auto px-6">
     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
@@ -105,41 +103,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" class="space-y-8">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
+            <!-- Title -->
             <div>
               <label class="block text-primary font-semibold mb-2">Title <span class="text-red-600">*</span></label>
               <select name="title" required class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
                 <option value="">Select Title</option>
-                <option <?= isset($data['title']) && $data['title']=='Prof.' ? 'selected' : '' ?>>Prof.</option>
-                <option <?= isset($data['title']) && $data['title']=='Dr.' ? 'selected' : '' ?>>Dr.</option>
-                <option <?= isset($data['title']) && $data['title']=='Mr.' ? 'selected' : '' ?>>Mr.</option>
-                <option <?= isset($data['title']) && $data['title']=='Ms.' ? 'selected' : '' ?>>Ms.</option>
+                <option <?= ($data['title']??'')=='Prof.' ? 'selected' : '' ?>>Prof.</option>
+                <option <?= ($data['title']??'')=='Dr.' ? 'selected' : '' ?>>Dr.</option>
+                <option <?= ($data['title']??'')=='Mr.' ? 'selected' : '' ?>>Mr.</option>
+                <option <?= ($data['title']??'')=='Ms.' ? 'selected' : '' ?>>Ms.</option>
               </select>
             </div>
 
+            <!-- Full Name -->
             <div>
               <label class="block text-primary font-semibold mb-2">Full Name <span class="text-red-600">*</span></label>
               <input type="text" name="full_name" value="<?= htmlspecialchars($data['full_name'] ?? '') ?>" required placeholder="Enter your full name"
                      class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
             </div>
 
+            <!-- NIC/Passport -->
             <div>
-              <label class="block text-primary font-semibold mb-2">NIC / Passport / DL No. <span class="text-red-600">*</span></label>
+              <label class="block text-primary font-semibold mb-2">NIC / Passport No. <span class="text-red-600">*</span></label>
               <input type="text" name="nic_passport" value="<?= htmlspecialchars($data['nic_passport'] ?? '') ?>" required placeholder="e.g. 199812345678"
                      class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
             </div>
 
+            <!-- Email -->
             <div>
               <label class="block text-primary font-semibold mb-2">Email Address <span class="text-red-600">*</span></label>
               <input type="email" name="email" value="<?= htmlspecialchars($data['email'] ?? '') ?>" required placeholder="name@example.com"
                      class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
             </div>
 
+            <!-- Phone -->
             <div>
               <label class="block text-primary font-semibold mb-2">Contact Number <span class="text-red-600">*</span></label>
               <input type="tel" name="phone" value="<?= htmlspecialchars($data['phone'] ?? '') ?>" required placeholder="+94 77 123 4567"
                      class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
             </div>
 
+            <!-- NEW: Local or International -->
+            <div>
+              <label class="block text-primary font-semibold mb-2">Participant Category <span class="text-red-600">*</span></label>
+              <select name="country_type" required class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
+                <option value="">Select Category</option>
+                <option value="local" <?= ($data['country_type']??'')=='local' ? 'selected' : '' ?>>Local (Sri Lanka)</option>
+                <option value="international" <?= ($data['country_type']??'')=='international' ? 'selected' : '' ?>>International</option>
+              </select>
+            </div>
+
+            <!-- Food Preference -->
             <div>
               <label class="block text-primary font-semibold mb-2">Food Preference <span class="text-red-600">*</span></label>
               <select name="food_preference" required class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
@@ -152,6 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
             </div>
 
+            <!-- Participant Type -->
             <div>
               <label class="block text-primary font-semibold mb-2">Participant Type <span class="text-red-600">*</span></label>
               <select name="participant_type" required class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
@@ -162,12 +177,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
             </div>
 
+            <!-- Password -->
             <div>
               <label class="block text-primary font-semibold mb-2">Password <span class="text-red-600">*</span></label>
               <input type="password" name="password" required minlength="6" placeholder="Create password"
                      class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none transition text-lg">
             </div>
 
+            <!-- Confirm Password -->
             <div>
               <label class="block text-primary font-semibold mb-2">Confirm Password <span class="text-red-600">*</span></label>
               <input type="password" name="confirm_password" required minlength="6" placeholder="Confirm password"

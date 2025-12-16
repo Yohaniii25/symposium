@@ -6,10 +6,28 @@ require_once 'classes/database.php';
 $db = new Database();
 $conn = $db->conn;
 
-// Get resultIndicator from gateway
+// Check if this is bank slip upload
+if (isset($_GET['method']) && $_GET['method'] === 'slip') {
+    // BANK SLIP — always show success (database already updated in upload-slip.php)
+    echo "<div style='text-align:center; padding:100px; font-family:Arial; background:#f8fff8; min-height:100vh;'>
+            <h2 style='color:green; font-size:4rem; margin-bottom:30px;'>Payment Slip Submitted!</h2>
+            <p style='font-size:2rem; margin:30px 0;'>Thank you! Your bank deposit slip has been received.</p>
+            <p style='font-size:1.6rem; color:#29147d; margin:30px 0;'>
+                Your payment is under review. Confirmation within 24 hours.
+            </p>
+            <div style='margin-top:50px;'>
+                <a href='user-profile.php' style='background:#29147d; color:white; padding:20px 60px; border-radius:15px; text-decoration:none; font-weight:bold; font-size:1.6rem; box-shadow:0 15px 35px rgba(41,20,125,0.4); display:inline-block;'>
+                    Back to My Profile
+                </a>
+            </div>
+          </div>";
+    exit();
+}
+
+// === ONLINE PAYMENT CODE BELOW — 100% UNCHANGED ===
 $resultIndicator = $_GET['resultIndicator'] ?? '';
 
-// Must have resultIndicator
+// Must have resultIndicator for online
 if (empty($resultIndicator)) {
     die("<h2 style='text-align:center;padding:100px;color:red;font-size:2rem;'>Invalid payment response</h2>");
 }
@@ -60,7 +78,7 @@ if ($user_id && !empty($orderId)) {
             ];
             $amount = $amounts[$user['participant_type']] ?? 5000;
 
-            // INSERT PAYMENT — THIS WAS MISSING!
+            // INSERT PAYMENT
             $insert = $conn->prepare("INSERT INTO payments 
                 (user_id, participant_type, amount, currency, payment_method, transaction_id, status) 
                 VALUES (?, ?, ?, 'LKR', 'online', ?, 'paid')");
@@ -73,7 +91,7 @@ if ($user_id && !empty($orderId)) {
     }
 }
 
-// Always show success (gateway said success)
+// Show success for online
 echo "<div style='text-align:center; padding:100px; font-family:Arial; background:#f8fff8; min-height:100vh;'>
         <h2 style='color:green; font-size:4rem; margin-bottom:30px;'>Payment Successful!</h2>
         <p style='font-size:2rem; margin:30px 0;'>Thank you for your registration.</p>

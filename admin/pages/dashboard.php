@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../../config/config.php';
 require_once '../../classes/database.php';
 require_once '../../classes/auth.php';
@@ -27,13 +26,16 @@ $sql = "
         u.participant_type,
         COALESCE(p.status, 'pending') AS payment_status,
         p.slip AS slip,
+        p.transaction_id AS transaction_id,
+        p.payment_method AS payment_method,
         CASE 
             WHEN u.participant_type = 'Presenting Author' THEN 1000
             WHEN u.participant_type = 'Co-Author' THEN 1500
             ELSE 5000 
         END AS amount
     FROM users u
-    LEFT JOIN payments p ON u.id = p.user_id AND p.status IN ('paid','under_review')
+    LEFT JOIN payments p ON u.id = p.user_id 
+        AND p.status IN ('paid','under_review')
     ORDER BY u.created_at DESC
 ";
 
@@ -138,8 +140,7 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Email / Phone</th>
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Type</th>
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Payment</th>
-              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Slip</th>
-              <th class="px-6 py-4 text-center text-sm font-bold text-primary">Action</th>
+              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Proof</th>
             </tr>
           </thead>
           <tbody id="participantTable" class="divide-y divide-gray-100">
@@ -185,7 +186,11 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
               </td>
               
               <td class="px-6 py-4 text-center">
-                <?php if ($p['slip'] && ($p['payment_status'] === 'under_review' || $p['payment_status'] === 'paid')): ?>
+                <?php if ($p['payment_method'] === 'online' && $p['transaction_id']): ?>
+                  <span class="font-mono text-sm text-primary font-bold">
+                    <?= htmlspecialchars($p['transaction_id']) ?>
+                  </span>
+                <?php elseif ($p['slip']): ?>
                   <a href="../../uploads/payment_slips/<?= htmlspecialchars($p['slip']) ?>" 
                      target="_blank" class="text-primary hover:text-accent font-bold text-sm underline">
                     View Slip
@@ -193,13 +198,6 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
                 <?php else: ?>
                   <span class="text-gray-400 text-sm">—</span>
                 <?php endif; ?>
-              </td>
-              
-              <td class="px-6 py-4 text-center">
-                <button onclick="if(confirm('Delete this user?')) window.location='delete-user.php?id=<?= $p['id'] ?>'"
-                        class="text-red-600 hover:text-red-800 font-bold text-sm">
-                  Delete
-                </button>
               </td>
             </tr>
             <?php endforeach; ?>
@@ -210,7 +208,6 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
   </div>
 
   <script>
-    // Search + Filter
     const searchInput = document.getElementById('searchInput');
     const typeFilter = document.getElementById('typeFilter');
     const paymentFilter = document.getElementById('paymentFilter');

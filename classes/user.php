@@ -1,25 +1,33 @@
 <?php
-class User {
+class User
+{
 
     private $db;
     private $conn;
 
-    public function __construct($database) {
+    public function __construct($database)
+    {
         $this->db = $database;
         $this->conn = $this->db->getConnection();
     }
 
-    // Register a new user
-    public function register($data) {
-        $sql = "INSERT INTO users (title, full_name, nic_passport, email, phone, food_preference, participant_type, password) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    // Register a new user — NOW SUPPORTS country_type
+    public function register($data)
+    {
+        $sql = "INSERT INTO users (title, full_name, nic_passport, email, phone, food_preference, participant_type, country_type, password) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+        if (!$stmt) {
+            error_log("Prepare failed: " . $this->conn->error); // for debugging
+            return false;
+        }
 
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        $stmt->bind_param("ssssssss",
+        $stmt->bind_param(
+            "sssssssss",
             $data['title'],
             $data['full_name'],
             $data['nic_passport'],
@@ -27,18 +35,23 @@ class User {
             $data['phone'],
             $data['food_preference'],
             $data['participant_type'],
+            $data['country_type'],  // ← NEW
             $hashed
         );
 
         $result = $stmt->execute();
+        if (!$result) {
+            error_log("Execute failed: " . $stmt->error);
+        }
         $stmt->close();
 
         return $result;
     }
 
-    // Login user — NOW RETURNS reference_no
-    public function login($email, $password) {
-        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no, password 
+    // Login user — includes country_type
+    public function login($email, $password)
+    {
+        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, country_type, reference_no, password 
                 FROM users WHERE email = ? LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
@@ -51,14 +64,15 @@ class User {
         $stmt->close();
 
         if ($user && password_verify($password, $user['password'])) {
-            return $user; // Now includes reference_no
+            return $user;
         }
 
         return false;
     }
 
     // Check if email exists
-    public function emailExists($email) {
+    public function emailExists($email)
+    {
         $sql = "SELECT id FROM users WHERE email = ?";
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) return false;
@@ -72,9 +86,10 @@ class User {
         return $exists;
     }
 
-    // Get user by ID — also returns reference_no
-    public function getUserById($id) {
-        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, reference_no
+    // Get user by ID — includes country_type
+    public function getUserById($id)
+    {
+        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, country_type, reference_no
                 FROM users WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
@@ -89,8 +104,9 @@ class User {
         return $user;
     }
 
-    // Get user profile with payment status
-    public function getUserWithPaymentStatus($id) {
+    // Get user profile with payment status — includes country_type
+    public function getUserWithPaymentStatus($id)
+    {
         $sql = "SELECT 
                     u.id,
                     u.title,
@@ -100,6 +116,7 @@ class User {
                     u.phone,
                     u.food_preference,
                     u.participant_type,
+                    u.country_type,
                     u.reference_no,
                     u.created_at,
                     p.id AS payment_id,
@@ -129,7 +146,8 @@ class User {
     }
 
     // Get all payments for a user
-    public function getUserPayments($id) {
+    public function getUserPayments($id)
+    {
         $sql = "SELECT 
                     id,
                     amount,
@@ -158,4 +176,3 @@ class User {
         return $payments;
     }
 }
-?>

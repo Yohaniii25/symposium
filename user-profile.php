@@ -111,10 +111,17 @@ $userData = [
           </a>
         </div>
 
-        <div class="text-center mt-8">
-          <a href="logout.php" class="text-red-600 hover:text-red-800 font-medium">
-            Logout
-          </a>
+        <div class="text-center mt-8 space-y-3">
+          <div>
+            <a href="logout.php" class="text-red-600 hover:text-red-800 font-medium">
+              Logout
+            </a>
+          </div>
+          <div>
+            <a href="delete-user.php" class="text-gray-600 hover:text-red-700 font-medium text-sm">
+              Delete Account
+            </a>
+          </div>
         </div>
 
         <!-- Payment History Section -->
