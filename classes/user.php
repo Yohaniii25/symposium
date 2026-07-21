@@ -199,4 +199,24 @@ class User
 
         return $result;
     }
+
+    // Approve a user by ID
+    public function approve($id)
+    {
+        $sql = "UPDATE users SET status = 'approved' WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->error = $this->conn->error;
+            return false;
+        }
+
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
+        if (!$result) {
+            $this->error = $stmt->error;
+        }
+        $stmt->close();
+
+        return $result;
+    }
 }

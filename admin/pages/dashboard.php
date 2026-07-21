@@ -172,11 +172,11 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
                     </a>
 
                     <!-- Check/Approve Icon -->
-                    <a href="check_user.php?id=<?= $p['id'] ?>"
+                    <!-- <a href="check_user.php?id=<?= $p['id'] ?>"
                       class="text-green-600 hover:text-green-800 transition-colors duration-200"
                       title="Check/Approve">
                       <i class="bi bi-check-circle-fill text-xl"></i>
-                    </a>
+                    </a> -->
 
                     <!-- Delete Icon -->
                     <a href="delete_user.php?id=<?= $p['id'] ?>"
