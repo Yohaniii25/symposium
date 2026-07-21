@@ -100,7 +100,9 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
         <select id="typeFilter" class="filter-select">
           <option value="all">All Categories</option>
           <option value="Presenting Author">Presenting Author</option>
-          <option value="Other Participants">Other Participants</option>
+          <option value="Co-Author">Co-Author</option>
+          <option value="General Attendee">General Attendee</option>
+          <option value="Trade Representative">Trade Representative</option>
         </select>
       </div>
     </div>
