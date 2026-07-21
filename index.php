@@ -243,54 +243,54 @@
 <!-- SYMPOSIUM PROGRAM -->
 <!-- IMPORTANT DATES & SYMPOSIUM PROGRAM -->
 <section class="py-16 bg-lightbg">
-  <div class="max-w-7xl mx-auto px-6">
+  <div class="container-max">
 
     <!-- IMPORTANT DATES SECTION -->
-    <div class="text-center mb-16">
-      <h2 class="section-header-title mb-2 text-3xl md:text-4xl font-bold">Important Dates (Tentative)</h2>
-      <div class="section-header-line mt-4 mb-10 w-24 h-1 bg-accent mx-auto"></div>
+    <div class="text-center mb-12">
+      <h2 class="section-header-title">Important Dates <span class="text-accent font-semibold text-sm uppercase tracking-wider pl-2">(Tentative)</span></h2>
+      <div class="section-header-line mt-4 mb-8 w-24 h-1 bg-accent mx-auto"></div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+      <div class="dates-grid">
         <!-- Abstract Submission -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-500">
-          <p class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-2">Deadline</p>
-          <h4 class="font-bold text-gray-800 text-lg">Abstract Submission</h4>
-          <p class="text-2xl font-bold text-blue-600 mt-3">26ᵗʰ July 2026</p>
+        <div class="info-date-card info-date-card-blue">
+          <span class="date-card-tag">Deadline</span>
+          <h4 class="date-card-title">Abstract Submission</h4>
+          <span class="date-card-value date-card-value-blue">26ᵗʰ July 2026</span>
         </div>
         <!-- Notification -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-emerald-500">
-          <p class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-2">Notification</p>
-          <h4 class="font-bold text-gray-800 text-lg">Acceptance</h4>
-          <p class="text-2xl font-bold text-emerald-600 mt-3">03ʳᵈ Aug 2026</p>
+        <div class="info-date-card info-date-card-emerald">
+          <span class="date-card-tag">Notification</span>
+          <h4 class="date-card-title">Acceptance</h4>
+          <span class="date-card-value date-card-value-emerald">03ʳᵈ Aug 2026</span>
         </div>
         <!-- Camera-ready -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-purple-500">
-          <p class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-2">Submission</p>
-          <h4 class="font-bold text-gray-800 text-lg">Camera-Ready</h4>
-          <p class="text-2xl font-bold text-purple-600 mt-3">14ᵗʰ Aug 2026</p>
+        <div class="info-date-card info-date-card-purple">
+          <span class="date-card-tag">Submission</span>
+          <h4 class="date-card-title">Camera-Ready</h4>
+          <span class="date-card-value date-card-value-purple">14ᵗʰ Aug 2026</span>
         </div>
         <!-- Registration -->
-        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-500">
-          <p class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-2">Deadline</p>
-          <h4 class="font-bold text-gray-800 text-lg">Registration</h4>
-          <p class="text-2xl font-bold text-red-600 mt-3">23ʳᵈ Aug 2026</p>
+        <div class="info-date-card info-date-card-red">
+          <span class="date-card-tag">Deadline</span>
+          <h4 class="date-card-title">Registration</h4>
+          <span class="date-card-value date-card-value-red">23ʳᵈ Aug 2026</span>
         </div>
       </div>
 
-      <p class="mt-10 text-gray-700 max-w-4xl mx-auto text-lg leading-relaxed italic">
+      <p class="timeline-invitation">
         "We invite submissions and attendance from all interested parties to contribute to this pivotal event in Sri Lanka, the 'Gem Island.' Join us in advancing the industry toward a more sustainable and technologically sophisticated future."
       </p>
     </div>
 
     <!-- MAIN PROGRAM SECTION -->
-    <div class="text-center mb-12 mt-20">
-      <h2 class="section-header-title mb-2 text-3xl md:text-4xl font-bold">Official Symposium Program</h2>
-      <p class="text-xl text-accent font-semibold mt-2">August 31st – September 2nd, 2026</p>
-      <div class="section-header-line mt-4 w-24 h-1 bg-accent mx-auto"></div>
+    <div class="text-center mb-10 mt-16">
+      <h2 class="section-header-title">Official Symposium Program</h2>
+      <p class="text-base text-accent font-semibold mt-1">August 31st – September 2nd, 2026</p>
+      <div class="section-header-line mt-3 w-24 h-1 bg-accent mx-auto"></div>
     </div>
 
     <!-- DAY 1 SCHEDULE (August 31) -->
-    <div class="session-card mb-12">
+    <div class="session-card mb-8">
       <div class="session-card-header session-card-header-blue">
         <h3 class="session-card-title">Day 01: Pre-Symposium Exhibitions</h3>
         <p class="session-card-time">31st August 2026</p>
@@ -298,22 +298,22 @@
       <div class="table-responsive">
         <table class="table-theme w-full text-left">
           <tbody>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-blue">Event 1</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Inauguration of Gem City Rathnapura Exhibition</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-blue">Event 1</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Inauguration of Gem City Rathnapura Exhibition</span>
               </td>
             </tr>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-blue">Event 2</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Visit Gem City Ratnapura International Gem and Jewellery Exhibition</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-blue">Event 2</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Visit Gem City Ratnapura International Gem and Jewellery Exhibition</span>
               </td>
             </tr>
-            <tr>
-              <td class="session-table-time-col w-1/4 session-table-val-blue">Event 3</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Knowledge Sharing Sessions</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-blue">Event 3</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Knowledge Sharing Sessions</span>
               </td>
             </tr>
           </tbody>
@@ -322,7 +322,7 @@
     </div>
 
     <!-- DAY 2 SCHEDULE (September 01) -->
-    <div class="session-card mb-12">
+    <div class="session-card mb-8">
       <div class="session-card-header session-card-header-emerald">
         <h3 class="session-card-title">Day 02: Excursions & Gala Night</h3>
         <p class="session-card-time">01st September 2026</p>
@@ -330,26 +330,26 @@
       <div class="table-responsive">
         <table class="table-theme w-full text-left">
           <tbody>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-emerald">07:00 AM – 12:00 PM</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-bold text-lg text-gray-800 mb-2">Symposium Excursion</span>
-                <ul class="pl-10 list-disc text-gray-700 space-y-1">
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-emerald">07:00 AM – 12:00 PM</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title" style="font-weight: 700;">Symposium Excursion</span>
+                <ul class="schedule-sub-list">
                   <li>Visit Open Gem market – Niwithigala</li>
                   <li>Visit active Sri Lankan mines (Traditional and Mechanized) – Pelmadulla</li>
                 </ul>
               </td>
             </tr>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-emerald">01:00 PM – 05:00 PM</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Knowledge Sharing Sessions at Hotel Silver Ray</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-emerald">01:00 PM – 05:00 PM</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Knowledge Sharing Sessions at Hotel Silver Ray</span>
               </td>
             </tr>
-            <tr class="schedule-highlight-warn">
-              <td class="session-table-time-col w-1/4 font-bold text-accent">06:00 PM Onward</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-bold text-lg">Gala Night, Geuda Heat Treatment Live Session & Networking Session</span>
+            <tr class="program-table-row schedule-highlight-warn">
+              <td class="schedule-time-cell font-bold text-accent">06:00 PM Onward</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title" style="font-weight: 700;">Gala Night, Geuda Heat Treatment Live Session & Networking Session</span>
               </td>
             </tr>
           </tbody>
@@ -358,7 +358,7 @@
     </div>
 
     <!-- DAY 3 SCHEDULE (September 02) -->
-    <div class="session-card mb-12">
+    <div class="session-card mb-8">
       <div class="session-card-header session-card-header-purple">
         <h3 class="session-card-title">Day 03: Main Symposium Sessions</h3>
         <p class="session-card-time">Wednesday, 02nd September 2026</p>
@@ -366,34 +366,34 @@
       <div class="table-responsive">
         <table class="table-theme w-full text-left">
           <tbody>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-purple">Session 1</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Inauguration of “Gem and Jewellery Research Symposium of Sri Lanka 2026”</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-purple">Session 1</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Inauguration of “Gem and Jewellery Research Symposium of Sri Lanka 2026”</span>
               </td>
             </tr>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-purple">Session 2</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Keynote Speech</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-purple">Session 2</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Keynote Speech</span>
               </td>
             </tr>
-            <tr class="border-b">
-              <td class="session-table-time-col w-1/4 session-table-val-purple">Session 3</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Industrial Session</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-purple">Session 3</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Industrial Session</span>
               </td>
             </tr>
-            <tr class="border-b bg-gray-50">
-              <td class="session-table-time-col w-1/4 font-bold text-gray-700">Session 4</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-bold text-lg text-gray-900">Panel Discussion</span>
+            <tr class="program-table-row" style="background-color: var(--color-gray-50);">
+              <td class="schedule-time-cell font-bold text-gray-700">Session 4</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title" style="font-weight: 700;">Panel Discussion</span>
               </td>
             </tr>
-            <tr>
-              <td class="session-table-time-col w-1/4 session-table-val-purple">Session 5</td>
-              <td class="table-vertical-line py-4">
-                <span class="pl-6 block font-semibold text-lg text-gray-800">Technical Sessions</span>
+            <tr class="program-table-row">
+              <td class="schedule-time-cell session-table-val-purple">Session 5</td>
+              <td class="schedule-event-cell">
+                <span class="schedule-event-title">Technical Sessions</span>
               </td>
             </tr>
           </tbody>
@@ -401,6 +401,86 @@
       </div>
     </div>
 
+  </div>
+</section>
+
+
+
+<!-- INVITED LECTURES & PANEL DISCUSSIONS -->
+<section class="invited-lectures-section">
+  <div class="lectures-list-container">
+    <div class="lectures-list-header">
+      <h2 class="section-header-title lectures-list-title">Invited Lectures &amp; Panel Discussions</h2>
+      <div class="section-header-line"></div>
+    </div>
+
+    <div class="lectures-list-card">
+      <ul class="lectures-unordered-list">
+        
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">Gublin Lab</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">Lotus Lab</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">GIT</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">Prof. Chakkapan / Dr. Bhuwadol</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">Dr. Anold, GIA</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="lecture-speaker-name">Diamond Expert, Rasia</span>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <span class="lecture-speaker-name">Dr. Nimila</span> 
+            <span class="lecture-topic-desc">– Minie and value addition to gem waste</span>
+          </div>
+        </li>
+
+        <li class="lecture-list-item">
+          <svg class="lecture-list-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <span class="lecture-speaker-name">Mr. Sandun, Mr. Jaliya</span> 
+            <span class="lecture-topic-desc">– Heat Treatment</span>
+          </div>
+        </li>
+
+      </ul>
+    </div>
   </div>
 </section>
 

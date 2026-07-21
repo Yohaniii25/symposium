@@ -15,14 +15,14 @@ $loggedInAdmin = $auth->isAdmin() ? $auth->admin() : null;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GJRTI International Research Symposium 2025</title>
-  <meta name="description" content="GJRTI International Research Symposium 2025">
+  <title>Gem and Jewellery Research Symposium of Sri Lanka 2026</title>
+  <meta name="description" content="Gem and Jewellery Research Symposium of Sri Lanka 2026">
   <!-- favicon -->
   <link rel="icon" type="image/png" href="assets/img/logo.jpg" />
 
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -71,7 +71,7 @@ $loggedInAdmin = $auth->isAdmin() ? $auth->admin() : null;
           <img src="assets/img/logo.jpg" alt="GJRTI Logo" class="header-logo-img">
           <div>
             <h1 class="header-title-text">
-              GJRTI 3rd International Research Symposium 2025
+              Gem and Jewellery Research Symposium of Sri Lanka
             </h1>
           </div>
         </a>
