@@ -53,8 +53,8 @@ $loggedInAdmin = $auth->isAdmin() ? $auth->admin() : null;
       <?php else: ?>
         <!-- GUEST USER -->
         <div class="flex-gap-4">
-          <a href="login.php" class="hover:text-accent transition">Login</a>
-          <span class="header-topbar-divider">|</span>
+          <!-- <a href="login.php" class="hover:text-accent transition">Login</a>
+          <span class="header-topbar-divider">|</span> -->
           <a href="signup.php" class="hover:text-accent font-semibold transition">Sign Up</a>
         </div>
       <?php endif; ?>

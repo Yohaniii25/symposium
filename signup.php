@@ -18,10 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = [
     'title'            => trim($_POST['title']),
     'full_name'        => trim($_POST['full_name']),
-    'nic_passport'     => trim($_POST['nic_passport']),
+    'nic_passport'     => !empty(trim($_POST['nic_passport'] ?? '')) ? trim($_POST['nic_passport']) : null,
     'email'            => trim($_POST['email']),
     'phone'            => trim($_POST['phone']),
-    'food_preference'  => null, // Not required by new spec, keeping null
+    'food_preference'  => 'No Preference',
     'country_type'     => 'local', // Defaulting to local if omitted
   ];
 
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = [];
       }
     } else {
-      $message = "Registration failed. Please try again.";
+      $message = "Registration failed. " . ($userModel->error ? "Error: " . $userModel->error : "Please try again.");
     }
   }
 }

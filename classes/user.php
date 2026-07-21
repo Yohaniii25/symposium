@@ -4,6 +4,7 @@ class User
 
     private $db;
     private $conn;
+    public $error;
 
     public function __construct($database)
     {
@@ -19,6 +20,7 @@ class User
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
+            $this->error = $this->conn->error;
             error_log("Prepare failed: " . $this->conn->error); // for debugging
             return false;
         }
@@ -41,6 +43,7 @@ class User
 
         $result = $stmt->execute();
         if (!$result) {
+            $this->error = $stmt->error;
             error_log("Execute failed: " . $stmt->error);
         }
         $stmt->close();
@@ -175,5 +178,25 @@ class User
         $stmt->close();
 
         return $payments;
+    }
+
+    // Delete a user by ID
+    public function delete($id)
+    {
+        $sql = "DELETE FROM users WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->error = $this->conn->error;
+            return false;
+        }
+
+        $stmt->bind_param("i", $id);
+        $result = $stmt->execute();
+        if (!$result) {
+            $this->error = $stmt->error;
+        }
+        $stmt->close();
+
+        return $result;
     }
 }

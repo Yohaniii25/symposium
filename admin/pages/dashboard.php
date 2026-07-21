@@ -12,31 +12,22 @@ if (!$auth->isAdmin()) {
 $db = new Database();
 $conn = $db->conn;
 
-// Fetch all users with payment info
+// Fetch all users
 $sql = "
     SELECT 
-        u.id,
-        u.reference_no,
-        u.title,
-        u.full_name,
-        u.nic_passport,
-        u.email,
-        u.phone,
-        u.food_preference,
-        u.participant_type,
-        COALESCE(p.status, 'pending') AS payment_status,
-        p.slip AS slip,
-        p.transaction_id AS transaction_id,
-        p.payment_method AS payment_method,
-        CASE 
-            WHEN u.participant_type = 'Presenting Author' THEN 1000
-            WHEN u.participant_type = 'Co-Author' THEN 1500
-            ELSE 5000 
-        END AS amount
-    FROM users u
-    LEFT JOIN payments p ON u.id = p.user_id 
-        AND p.status IN ('paid','under_review')
-    ORDER BY u.created_at DESC
+        id,
+        reference_no,
+        title,
+        full_name,
+        nic_passport,
+        email,
+        phone,
+        food_preference,
+        participant_type,
+        abstract_name,
+        created_at
+    FROM users
+    ORDER BY created_at DESC
 ";
 
 $result = $conn->query($sql);
@@ -51,6 +42,7 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - GJRTI Symposium</title>
   <link rel="stylesheet" href="../../assets/css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
 <body class="admin-dashboard-body">
@@ -59,10 +51,10 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
   <div class="dashboard-header">
     <div class="dashboard-header-container">
       <div class="dashboard-header-logo-section">
-        <img src="../../assets/img/logo.png" alt="GJRTI" class="dashboard-header-logo">
+        <img src="../../assets/img/logo.jpg" alt="GJRTI" class="dashboard-header-logo">
         <div>
           <h1 class="text-3xl font-bold">Admin Dashboard</h1>
-          <p class="opacity-90">GJRTI 3rd International Research Symposium 2025</p>
+          <p class="opacity-90">Gem and Jewellery Research Symposium of Sri Lanka 2026</p>
         </div>
       </div>
       <div class="dashboard-header-stats-section">
@@ -70,34 +62,32 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
         <a href="../../logout.php" class="btn-profile-primary" style="background-color: var(--color-red-600); width: auto; padding: 0.75rem 1.5rem;">
           Logout
         </a>
+        <!-- back to symposium button -->
+        <a href="../../index.php" class="btn-profile-primary" style="background-color: var(--color-blue-600); width: auto; padding: 0.75rem 1.5rem;">
+          Back to Symposium
+        </a>
       </div>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-6 py-10">
+  <div class="max-w-7xl mx-auto px-6 py-10" style="width: 100%;">
 
     <!-- Stats Cards -->
-    <div class="dashboard-stats-grid">
+    <div class="dashboard-stats-grid dashboard-stats-grid-3">
       <div class="stat-card">
         <p class="stat-card-title">Total Registered</p>
-        <p class="stat-card-value text-primary"><?= count($participants) ?></p>
+        <p class="stat-card-value text-val-primary"><?= count($participants) ?></p>
       </div>
       <div class="stat-card">
-        <p class="stat-card-title">Paid</p>
-        <p class="stat-card-value text-green-600">
-          <?= count(array_filter($participants, fn($p) => $p['payment_status'] === 'paid')) ?>
+        <p class="stat-card-title">Presenting Authors</p>
+        <p class="stat-card-value text-val-green">
+          <?= count(array_filter($participants, fn($p) => $p['participant_type'] === 'Presenting Author')) ?>
         </p>
       </div>
       <div class="stat-card">
-        <p class="stat-card-title">Under Review</p>
-        <p class="stat-card-value text-yellow-600">
-          <?= count(array_filter($participants, fn($p) => $p['payment_status'] === 'under_review')) ?>
-        </p>
-      </div>
-      <div class="stat-card">
-        <p class="stat-card-title">Pending</p>
-        <p class="stat-card-value text-red-600">
-          <?= count(array_filter($participants, fn($p) => $p['payment_status'] === 'pending')) ?>
+        <p class="stat-card-title">Other Participants</p>
+        <p class="stat-card-value text-val-amber">
+          <?= count(array_filter($participants, fn($p) => $p['participant_type'] !== 'Presenting Author')) ?>
         </p>
       </div>
     </div>
@@ -105,19 +95,12 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
     <!-- Filters -->
     <div class="dashboard-filters-card">
       <div class="dashboard-filters-flex">
-        <input type="text" id="searchInput" placeholder="Search by name, email, reference..."
+        <input type="text" id="searchInput" placeholder="Search by name, email, credentials, abstract..."
           class="filter-input filter-input-search">
         <select id="typeFilter" class="filter-select">
-          <option value="all">All Participants</option>
+          <option value="all">All Categories</option>
           <option value="Presenting Author">Presenting Author</option>
-          <option value="Co-Author">Co-Author</option>
           <option value="Other Participants">Other Participants</option>
-        </select>
-        <select id="paymentFilter" class="filter-select">
-          <option value="all">All Payments</option>
-          <option value="paid">Paid</option>
-          <option value="under_review">Under Review</option>
-          <option value="pending">Pending</option>
         </select>
       </div>
     </div>
@@ -134,28 +117,32 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
             <tr>
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Ref No</th>
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Name</th>
+              <th class="px-6 py-4 text-left text-sm font-bold text-primary">NIC / Passport</th>
               <th class="px-6 py-4 text-left text-sm font-bold text-primary">Email / Phone</th>
-              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Type</th>
-              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Payment</th>
-              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Proof</th>
+              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Category / Type</th>
+              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Abstract Name / Number</th>
+
+              <th class="px-6 py-4 text-left text-sm font-bold text-primary">Action</th>
             </tr>
           </thead>
-          <tbody id="participantTable">
+          <tbody id="participantTable" class="divide-y-gray">
             <?php foreach ($participants as $p): ?>
               <tr class="dashboard-table-row participant-row"
                 data-type="<?= $p['participant_type'] ?>"
-                data-payment="<?= $p['payment_status'] ?>"
-                data-search="<?= strtolower($p['full_name'] . $p['email'] . $p['reference_no']) ?>">
+                data-search="<?= strtolower($p['full_name'] . $p['email'] . $p['nic_passport'] . ($p['abstract_name'] ?? '') . $p['reference_no']) ?>">
 
                 <td class="px-6 py-4">
-                  <span class="font-mono text-primary font-bold text-sm">
+                  <span class="font-mono-bold">
                     <?= htmlspecialchars($p['reference_no'] ?? '—') ?>
                   </span>
                 </td>
 
                 <td class="px-6 py-4">
                   <div class="font-semibold"><?= htmlspecialchars($p['title'] . ' ' . $p['full_name']) ?></div>
-                  <div class="text-xs text-gray-500"><?= htmlspecialchars($p['nic_passport']) ?></div>
+                </td>
+
+                <td class="px-6 py-4 text-sm font-mono-bold">
+                  <?= htmlspecialchars($p['nic_passport'] ?: '—') ?>
                 </td>
 
                 <td class="px-6 py-4 text-sm">
@@ -164,33 +151,42 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
                 </td>
 
                 <td class="px-6 py-4">
-                  <span class="badge-type <?= $p['participant_type'] === 'Presenting Author' ? 'badge-type-author-presenting' : ($p['participant_type'] === 'Co-Author' ? 'badge-type-author-co' : 'badge-type-other') ?>">
+                  <span class="badge-type <?= $p['participant_type'] === 'Presenting Author' ? 'badge-type-author-presenting' : (($p['participant_type'] === 'Co-Author' || $p['participant_type'] === 'Co-authors') ? 'badge-type-author-co' : 'badge-type-other') ?>">
                     <?= $p['participant_type'] ?>
                   </span>
                 </td>
 
                 <td class="px-6 py-4 text-sm">
-                  <span class="inline-flex items-center gap-2 font-bold
-                  <?= $p['payment_status'] === 'paid' ? 'text-green-600' : ($p['payment_status'] === 'under_review' ? 'text-yellow-600' : 'text-red-600') ?>">
-                    <span class="dot-indicator <?= $p['payment_status'] === 'paid' ? 'dot-paid' : ($p['payment_status'] === 'under_review' ? 'dot-review' : 'dot-pending') ?>"></span>
-                    <?= ucfirst(str_replace('_', ' ', $p['payment_status'])) ?>
-                  </span>
-                  <div class="text-xs text-gray-600 mt-1">LKR <?= number_format($p['amount']) ?></div>
+                  <?= htmlspecialchars($p['abstract_name'] ?: '—') ?>
                 </td>
+                <!-- action with view, check or pending with bi bi icons-->
+                <!-- action with view, check, or delete with bi bi icons -->
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-4">
 
-                <td class="px-6 py-4 text-center">
-                  <?php if ($p['payment_method'] === 'online' && $p['transaction_id']): ?>
-                    <span class="font-mono text-sm text-primary font-bold">
-                      <?= htmlspecialchars($p['transaction_id']) ?>
-                    </span>
-                  <?php elseif ($p['slip']): ?>
-                    <a href="../../uploads/payment_slips/<?= htmlspecialchars($p['slip']) ?>"
-                      target="_blank" class="text-primary hover:text-accent font-bold text-sm underline">
-                      View Slip
+                    <!-- View Icon -->
+                    <a href="view_user.php?id=<?= $p['id'] ?>"
+                      class="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                      title="View Details">
+                      <i class="bi bi-eye-fill text-xl"></i>
                     </a>
-                  <?php else: ?>
-                    <span class="text-gray-400 text-sm">—</span>
-                  <?php endif; ?>
+
+                    <!-- Check/Approve Icon -->
+                    <a href="check_user.php?id=<?= $p['id'] ?>"
+                      class="text-green-600 hover:text-green-800 transition-colors duration-200"
+                      title="Check/Approve">
+                      <i class="bi bi-check-circle-fill text-xl"></i>
+                    </a>
+
+                    <!-- Delete Icon -->
+                    <a href="delete_user.php?id=<?= $p['id'] ?>"
+                      onclick="return confirm('Are you sure you want to delete this user?');"
+                      class="text-red-600 hover:text-red-800 transition-colors duration-200"
+                      title="Delete User">
+                      <i class="bi bi-trash-fill text-xl"></i>
+                    </a>
+
+                  </div>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -203,30 +199,25 @@ $participants = $result->fetch_all(MYSQLI_ASSOC);
   <script>
     const searchInput = document.getElementById('searchInput');
     const typeFilter = document.getElementById('typeFilter');
-    const paymentFilter = document.getElementById('paymentFilter');
     const rows = document.querySelectorAll('.participant-row');
 
     function filterTable() {
       const search = searchInput.value.toLowerCase();
       const type = typeFilter.value;
-      const payment = paymentFilter.value;
 
       rows.forEach(row => {
         const text = row.getAttribute('data-search');
         const rowType = row.getAttribute('data-type');
-        const rowPayment = row.getAttribute('data-payment');
 
         const matchesSearch = text.includes(search);
         const matchesType = type === 'all' || rowType === type;
-        const matchesPayment = payment === 'all' || rowPayment === payment;
 
-        row.style.display = matchesSearch && matchesType && matchesPayment ? '' : 'none';
+        row.style.display = matchesSearch && matchesType ? '' : 'none';
       });
     }
 
     searchInput.addEventListener('input', filterTable);
     typeFilter.addEventListener('change', filterTable);
-    paymentFilter.addEventListener('change', filterTable);
   </script>
 </body>
 
