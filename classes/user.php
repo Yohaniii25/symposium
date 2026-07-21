@@ -12,11 +12,10 @@ class User
     }
 
 
-    // Register a new user — NOW SUPPORTS country_type
     public function register($data)
     {
-        $sql = "INSERT INTO users (title, full_name, nic_passport, email, phone, food_preference, participant_type, country_type, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (title, full_name, nic_passport, abstract_name, email, phone, food_preference, participant_type, country_type, password) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
@@ -24,18 +23,19 @@ class User
             return false;
         }
 
-        $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
+        $hashed = $data['password'] ? password_hash($data['password'], PASSWORD_DEFAULT) : null;
 
         $stmt->bind_param(
-            "sssssssss",
+            "ssssssssss",
             $data['title'],
             $data['full_name'],
             $data['nic_passport'],
+            $data['abstract_name'],
             $data['email'],
             $data['phone'],
             $data['food_preference'],
             $data['participant_type'],
-            $data['country_type'],  // ← NEW
+            $data['country_type'],
             $hashed
         );
 
@@ -51,7 +51,7 @@ class User
     // Login user — includes country_type
     public function login($email, $password)
     {
-        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, country_type, reference_no, password 
+        $sql = "SELECT id, title, full_name, email, phone, abstract_name, food_preference, participant_type, country_type, reference_no, password 
                 FROM users WHERE email = ? LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
@@ -89,7 +89,7 @@ class User
     // Get user by ID — includes country_type
     public function getUserById($id)
     {
-        $sql = "SELECT id, title, full_name, email, phone, food_preference, participant_type, country_type, reference_no
+        $sql = "SELECT id, title, full_name, email, phone, abstract_name, food_preference, participant_type, country_type, reference_no
                 FROM users WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
@@ -112,6 +112,7 @@ class User
                     u.title,
                     u.full_name,
                     u.nic_passport,
+                    u.abstract_name,
                     u.email,
                     u.phone,
                     u.food_preference,
